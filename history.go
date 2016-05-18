@@ -12,7 +12,7 @@ type History struct {
 	LogEventId int    `json:"logeventid,omitempty"`
 	Severity   int    `json:"severity,omitempty"`
 	Source     string `json:"source,omitempty"`
-	Timestamp  uint   `json:"timestamp,omitempty"`
+	Clock      uint   `json:"clock,omitempty"`
 }
 
 type Histories []History
