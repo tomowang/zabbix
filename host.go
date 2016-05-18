@@ -47,6 +47,20 @@ func (api *API) HostsGet(params Params) (res Hosts, err error) {
 	return
 }
 
+// Wrapper for host.get: https://www.zabbix.com/documentation/2.2/manual/appendix/api/host/get
+func (api *API) HostInterfacesGet(params Params) (res HostInterfaces, err error) {
+	if _, present := params["output"]; !present {
+		params["output"] = "extend"
+	}
+	response, err := api.CallWithError("hostinterface.get", params)
+	if err != nil {
+		return
+	}
+
+	reflector.MapsToStructs2(response.Result.([]interface{}), &res, reflector.Strconv, "json")
+	return
+}
+
 // Gets hosts by host group Ids.
 func (api *API) HostsGetByHostGroupIds(ids []string) (res Hosts, err error) {
 	return api.HostsGet(Params{"groupids": ids})
