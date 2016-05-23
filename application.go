@@ -7,8 +7,8 @@ import (
 // https://www.zabbix.com/documentation/2.2/manual/appendix/api/application/definitions
 type Application struct {
 	ApplicationId string `json:"applicationid,omitempty"`
-	HostId        string `json:"hostid"`
-	Name          string `json:"name"`
+	HostId        string `json:"hostid,omitempty"`
+	Name          string `json:"name,omitempty"`
 	TemplateId    string `json:"templateid,omitempty"`
 }
 

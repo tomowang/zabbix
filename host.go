@@ -27,8 +27,8 @@ type Host struct {
 	Status    StatusType    `json:"status"`
 
 	// Fields below used only when creating hosts
+	HostGroups   HostGroups     `json:"groups,omitempty"`
 	Applications Applications   `json:"applications,omitempty"`
-	GroupIds     HostGroupIds   `json:"groups,omitempty"`
 	Interfaces   HostInterfaces `json:"interfaces,omitempty"`
 }
 
@@ -44,10 +44,14 @@ func (api *API) HostsGet(params Params) (res Hosts, err error) {
 		return
 	}
 
-	res = make([]Host, len(response.Result.([]interface{})))
+	res = make(Hosts, len(response.Result.([]interface{})))
 	for i, h := range response.Result.([]interface{}) {
 		h2 := h.(map[string]interface{})
 		reflector.MapToStruct(h2, &res[i], reflector.Strconv, "json")
+
+		if groups, ok := h2["groups"]; ok {
+			reflector.MapsToStructs2(groups.([]interface{}), &res[i].HostGroups, reflector.Strconv, "json")
+		}
 
 		if apps, ok := h2["applications"]; ok {
 			reflector.MapsToStructs2(apps.([]interface{}), &res[i].Applications, reflector.Strconv, "json")
@@ -58,7 +62,7 @@ func (api *API) HostsGet(params Params) (res Hosts, err error) {
 		}
 	}
 
-	return res, nil
+	return
 }
 
 // Wrapper for host.get: https://www.zabbix.com/documentation/2.2/manual/appendix/api/host/get

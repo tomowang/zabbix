@@ -65,7 +65,7 @@ type Item struct {
 	Trends      int       `json:"trends,omitempty"`
 
 	// Fields below used only when creating applications
-	ApplicationIds []string `json:"applications,omitempty"`
+	Applications Applications `json:"applications,omitempty"`
 }
 
 type Items []Item
@@ -93,7 +93,16 @@ func (api *API) ItemsGet(params Params) (res Items, err error) {
 		return
 	}
 
-	reflector.MapsToStructs2(response.Result.([]interface{}), &res, reflector.Strconv, "json")
+	res = make(Items, len(response.Result.([]interface{})))
+	for i, h := range response.Result.([]interface{}) {
+		h2 := h.(map[string]interface{})
+		reflector.MapToStruct(h2, &res[i], reflector.Strconv, "json")
+
+		if apps, ok := h2["applications"]; ok {
+			reflector.MapsToStructs2(apps.([]interface{}), &res[i].Applications, reflector.Strconv, "json")
+		}
+	}
+
 	return
 }
 
